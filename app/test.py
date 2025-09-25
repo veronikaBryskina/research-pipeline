@@ -1,9 +1,9 @@
 import fsspec
 
-key = ""
-secret = ""
+key = "nika"
+secret = "p017g3RD2yuC"
 
-endpoint_url = "http://127.0.0.1:8089/"
+endpoint_url = "https://aarav-nonmaterialistic-tesha.ngrok-free.dev"
 
 fs = fsspec.filesystem(
     "s3",
@@ -14,8 +14,5 @@ fs = fsspec.filesystem(
 )
 
 print(fs.ls(""))
-
-with fs.open("mlflow/test.txt", "w") as f:
-    f.write("Hello through Nginx /s3/!\n")
 
 

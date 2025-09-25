@@ -68,5 +68,22 @@ services:
     networks:
       - the_one
 
+  ngrok:
+    container_name: ngrok
+    image: ngrok/ngrok:latest
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+      NGROK_LOG: stdout
+      NGROK_LOG_LEVEL: debug
+    command: ["http", "--log=stdout","nginx:80"]
+    depends_on:
+      - nginx
+    networks:
+      - the_one
+    ports:
+      - "4040:4040"                         # expose ngrok's local status UI
+    restart: unless-stopped
+
+
 networks:
   the_one: {}
