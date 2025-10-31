@@ -1,1 +1,5 @@
 s3fs
+ollama
+langchain
+langchain_core
+langchain_ollama

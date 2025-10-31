@@ -1,18 +1,7 @@
-import fsspec
+from src.data_preprocessing import DataProcessor
 
-key = "nika"
-secret = "p017g3RD2yuC"
+file = DataProcessor()
+#file.upload_data("data/01_input/Fake.csv")
+content = file.fetch_data("Fake.csv")
 
-endpoint_url = "https://aarav-nonmaterialistic-tesha.ngrok-free.dev"
-
-fs = fsspec.filesystem(
-    "s3",
-    key=key,
-    secret=secret,
-    client_kwargs={"endpoint_url": endpoint_url},
-    config_kwargs={"s3": {"addressing_style": "path"}} 
-)
-
-print(fs.ls(""))
-
-
+print(content.head())
