@@ -1,0 +1,217 @@
+runs:
+  experiment_1:
+    model: "llama3.1:8b"
+    datafile: "Fake.csv"
+    template: "zero"
+  experiment_2:
+    model: mbert
+    datafile: 2e-5
+    template: 3
+  experiment_3:
+    model: mbert
+    datafile: 2e-5
+    template: 3
+  experiment_4:
+    model: mbert
+    datafile: 2e-5
+    template: 3
+
+
+runs:
+  experiment_1:
+    model: "llama3.1:8b"
+    datafile: "Fake.csv"
+    template: "zero"
+  experiment_2:
+    model: "llama3.1:8b"
+    datafile: "True.csv"
+    template: "zero"
+  experiment_3:
+    model: "llama3.1:8b"
+    datafile: "data_ukr_trust.csv"
+    template: "zero"
+  experiment_4:
+    model: "llama3.1:8b"
+    datafile: "data_ukr_fake.csv"
+    template: "zero"
+  experiment_5:
+    model: "llama3.1:8b"
+    datafile: "Fake.csv"
+    template: "one"
+  experiment_6:
+    model: "llama3.1:8b"
+    datafile: "True.csv"
+    template: "one"
+  experiment_7:
+    model: "llama3.1:8b"
+    datafile: "data_ukr_trust.csv"
+    template: "one"
+  experiment_8:
+    model: "llama3.1:8b"
+    datafile: "data_ukr_fake.csv"
+    template: "one"
+  experiment_9:
+    model: "llama3.1:8b"
+    datafile: "Fake.csv"
+    template: "few"
+  experiment_10:
+    model: "llama3.1:8b"
+    datafile: "True.csv"
+    template: "few"
+  experiment_11:
+    model: "llama3.1:8b"
+    datafile: "data_ukr_trust.csv"
+    template: "few"
+  experiment_12:
+    model: "llama3.1:8b"
+    datafile: "data_ukr_fake.csv"
+    template: "few"
+
+  experiment_13:
+    model: "qwen3:8b"
+    datafile: "Fake.csv"
+    template: "zero"
+  experiment_14:
+    model: "qwen3:8b"
+    datafile: "True.csv"
+    template: "zero"
+  experiment_15:
+    model: "qwen3:8b"
+    datafile: "data_ukr_trust.csv"
+    template: "zero"
+  experiment_16:
+    model: "qwen3:8b"
+    datafile: "data_ukr_fake.csv"
+    template: "zero"
+  experiment_17:
+    model: "qwen3:8b"
+    datafile: "Fake.csv"
+    template: "one"
+  experiment_18:
+    model: "qwen3:8b"
+    datafile: "True.csv"
+    template: "one"
+  experiment_19:
+    model: "qwen3:8b"
+    datafile: "data_ukr_trust.csv"
+    template: "one"
+  experiment_20:
+    model: "qwen3:8b"
+    datafile: "data_ukr_fake.csv"
+    template: "one"
+  experiment_21:
+    model: "qwen3:8b"
+    datafile: "Fake.csv"
+    template: "few"
+  experiment_22:
+    model: "qwen3:8b"
+    datafile: "True.csv"
+    template: "few"
+  experiment_23:
+    model: "qwen3:8b"
+    datafile: "data_ukr_trust.csv"
+    template: "few"
+  experiment_24:
+    model: "qwen3:8b"
+    datafile: "data_ukr_fake.csv"
+    template: "few"
+
+  experiment_25:
+    model: "gemma3:12b"
+    datafile: "Fake.csv"
+    template: "zero"
+  experiment_26:
+    model: "gemma3:12b"
+    datafile: "True.csv"
+    template: "zero"
+  experiment_27:
+    model: "gemma3:12b"
+    datafile: "data_ukr_trust.csv"
+    template: "zero"
+  experiment_28:
+    model: "gemma3:12b"
+    datafile: "data_ukr_fake.csv"
+    template: "zero"
+  experiment_29:
+    model: "gemma3:12b"
+    datafile: "Fake.csv"
+    template: "one"
+  experiment_30:
+    model: "gemma3:12b"
+    datafile: "True.csv"
+    template: "one"
+  experiment_31:
+    model: "gemma3:12b"
+    datafile: "data_ukr_trust.csv"
+    template: "one"
+  experiment_32:
+    model: "gemma3:12b"
+    datafile: "data_ukr_fake.csv"
+    template: "one"
+  experiment_33:
+    model: "gemma3:12b"
+    datafile: "Fake.csv"
+    template: "few"
+  experiment_34:
+    model: "gemma3:12b"
+    datafile: "True.csv"
+    template: "few"
+  experiment_35:
+    model: "gemma3:12b"
+    datafile: "data_ukr_trust.csv"
+    template: "few"
+  experiment_36:
+    model: "gemma3:12b"
+    datafile: "data_ukr_fake.csv"
+    template: "few"
+
+  experiment_37:
+    model: "llama3.1:8b"
+    datafile: "Fake.csv"
+    template: "rag"
+  experiment_38:
+    model: "llama3.1:8b"
+    datafile: "True.csv"
+    template: "rag"
+  experiment_39:
+    model: "llama3.1:8b"
+    datafile: "data_ukr_trust.csv"
+    template: "rag"
+  experiment_40:
+    model: "llama3.1:8b"
+    datafile: "data_ukr_fake.csv"
+    template: "rag"
+
+  experiment_41:
+    model: "qwen3:8b"
+    datafile: "Fake.csv"
+    template: "rag"
+  experiment_42:
+    model: "qwen3:8b"
+    datafile: "True.csv"
+    template: "rag"
+  experiment_43:
+    model: "qwen3:8b"
+    datafile: "data_ukr_trust.csv"
+    template: "rag"
+  experiment_44:
+    model: "qwen3:8b"
+    datafile: "data_ukr_fake.csv"
+    template: "rag"
+
+  experiment_45:
+    model: "gemma3:12b"
+    datafile: "Fake.csv"
+    template: "rag"
+  experiment_46:
+    model: "gemma3:12b"
+    datafile: "True.csv"
+    template: "rag"
+  experiment_47:
+    model: "gemma3:12b"
+    datafile: "data_ukr_trust.csv"
+    template: "rag"
+  experiment_48:
+    model: "gemma3:12b"
+    datafile: "data_ukr_fake.csv"
+    template: "rag"
