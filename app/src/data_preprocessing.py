@@ -1,16 +1,15 @@
 import fsspec
 import pandas as pd
 import os
-from langchain.vectorstores import FAISS
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.embeddings import OllamaEmbeddings
+
 from langchain.schema import Document
 from langchain.retrievers import ContextualCompressionRetriever
-from langchain.retrievers.document_compressors import (
-    DocumentCompressorPipeline,
-    EmbeddingsRedundantFilter,
-    LongContextReorder
-)
+from langchain.retrievers.document_compressors import DocumentCompressorPipeline
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings, OllamaEmbeddings
+from langchain_community.document_transformers import EmbeddingsRedundantFilter, LongContextReorder
+
+
 from langchain.retrievers.merger_retriever import MergerRetriever
 from dotenv import load_dotenv
 load_dotenv()

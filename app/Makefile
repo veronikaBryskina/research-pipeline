@@ -15,7 +15,7 @@ pull:
 instalation:
 	pip install -r requirenments.txt
 
-runs: run1 run2 run3 run4 run5 run6
+runs: run1 run5 run9 run13 run17 run21 run25 run29 run33
 
 run%:
 	python3 src/main.py --name experiment_$*

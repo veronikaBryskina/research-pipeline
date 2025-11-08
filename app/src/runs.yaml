@@ -4,25 +4,6 @@ runs:
     datafile: "Fake.csv"
     template: "zero"
   experiment_2:
-    model: mbert
-    datafile: 2e-5
-    template: 3
-  experiment_3:
-    model: mbert
-    datafile: 2e-5
-    template: 3
-  experiment_4:
-    model: mbert
-    datafile: 2e-5
-    template: 3
-
-
-runs:
-  experiment_1:
-    model: "llama3.1:8b"
-    datafile: "Fake.csv"
-    template: "zero"
-  experiment_2:
     model: "llama3.1:8b"
     datafile: "True.csv"
     template: "zero"

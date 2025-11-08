@@ -19,7 +19,7 @@ load_dotenv()
 
 def pars_experiment():
     p = argparse.ArgumentParser()
-    p.add_argument("--config", "-c", default="runs.yaml", help="Path to YAML config.")
+    p.add_argument("--config", "-c", default="src/runs.yaml", help="Path to YAML config.")
     p.add_argument("--name", "-n", help="Run name.")
     args = p.parse_args()
 
@@ -95,7 +95,7 @@ def main():
         try:
             mlflow.log_params(params)
             content = DataProcessor().fetch_data(params['datafile'])
-            mlflow.log_input(content, context="questioning")
+            mlflow.set_tag("dataset", params['datafile'])
             
             pull_model(params['model'])
             llm = OllamaLLM(model=params['model'])

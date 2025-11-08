@@ -5,3 +5,7 @@ langchain_core
 langchain_ollama
 mlflow
 requests
+langchain-community
+faiss-cpu
+langchain-text-splitters
+sentence-transformers
