@@ -13,6 +13,9 @@ pull:
 	ollama pull mxbai-embed-large
 
 instalation:
+	apt install python3.10-venv
+	python3 -m venv .venv
+	source .venv/bin/activate
 	pip install -r requirenments.txt
 
 runs: run1 run5 run9 run13 run17 run21 run25 run29 run33
