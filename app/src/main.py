@@ -1,21 +1,17 @@
-import ollama
-import langchain
 import yaml
 import argparse
 from data_preprocessing import DataProcessor
-from langchain_ollama import OllamaEmbeddings, OllamaLLM
+from langchain_ollama import OllamaLLM
 from langchain_core.runnables import RunnablePassthrough
+from langchain.output_parsers import OutputFixingParser
 from prompt_templates import zero_shot_prompt, one_shot_prompt, few_shot_prompt, rag_prompt, parser
+from data_preprocessing import pull_model
 import mlflow
 import requests
 import json, os
 from dotenv import load_dotenv
 load_dotenv()
-#--------------
-# Temporary
-#--------------
-
-
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 def pars_experiment():
     p = argparse.ArgumentParser()
@@ -47,69 +43,78 @@ def set_template(template):
             return rag_prompt()
 
 
-def compile_chain(llm, params):
+def compile_chain(llm, params, retriever=None):
+    fixing_parser = OutputFixingParser.from_llm(parser=parser, llm=llm) # in case parser is not enough
     prompt = set_template(params['template'])
     if params['template'] == "rag":
-        chain = {"context": DataProcessor().create_retriever(params['database']), "input": RunnablePassthrough()} | prompt | llm | parser
+        chain = {"context": retriever, "input": RunnablePassthrough()} | prompt | llm | parser
     else:
         chain = prompt | llm | parser
     return chain
 
-
-
-def ensure_model_pulled(model_name: str):
-    host = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
-    r = requests.get(f"{host}/api/tags")
-    if model_name not in [m["name"] for m in r.json().get("models", [])]:
-        print(f"Pulling model: {model_name}")
-        r = requests.post(f"{host}/api/pull", json={"name": model_name})
-        for line in r.iter_lines():
-            print(line)  # Optional: stream progress
-        print("Model pulled successfully")
-
-
-def pull_model(model_name: str):
+def unload_model(model_name):
     host = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-    response = requests.get(f"{host}/api/tags")
-    response.raise_for_status()
-
-    available = [m.get("name") for m in response.json().get("models", [])]
-
-    if model_name not in available:
-        print(f"Model '{model_name}' not found. Pulling...")
-        pull_response = requests.post(f"{host}/api/pull", json={"name": model_name})
-        pull_response.raise_for_status()
-
-        for line in pull_response.iter_lines():
-            if line:
-                print(line.decode("utf-8"))
-        print(f"{model_name} is downloaded.")
-    else:
-        print(f"{model_name} already downloaded.")
-
+    requests.post(
+        f"{host}/api/generate",
+        json={"model": model_name, "prompt": "", "keep_alive": 0},
+    )
 
 def main():
     params, run_name = pars_experiment()
-    mlflow.set_tracking_uri(f"{os.getenv('ENDPOINT_URL')}/mlflow/")
     with mlflow.start_run():
-        try:
-            mlflow.log_params(params)
-            content = DataProcessor().fetch_data(params['datafile'])
-            mlflow.set_tag("dataset", params['datafile'])
-            
-            pull_model(params['model'])
-            llm = OllamaLLM(model=params['model'])
+        #try:
+        mlflow.log_params(params)
+        content = DataProcessor().fetch_data(params['datafile'])
+        mlflow.set_tag("dataset", params['datafile'])
+        
+        pull_model(params['model'])
 
-            chain = compile_chain(llm, params)
-            output_file = f"../data/02_output/test_{run_name}"
-            for text in content['text']:
+        retriever = DataProcessor().create_retriever('rag_texts_1.csv') ############################
+
+        llm = OllamaLLM(
+            model=params["model"],
+            temperature=0,
+            num_ctx=2048,
+            num_predict=128,
+            keep_alive=-1,
+            format="json",
+            model_kwargs={
+                "num_batch": 256,
+                "num_gpu": 1,
+            },
+        )
+
+
+        chain = compile_chain(llm, params, retriever) #####################################
+        output_file = f"data/02_output/test_{run_name}.jsonl"
+        context_file = f"data/02_output/test_{run_name}_retrieved.jsonl"
+
+
+        texts = content["text"]
+        def run_one(t):
+            try:
+                context = retriever.invoke({"input": t}) ##########
+                with open(context_file, "a") as f: ###################
+                    json.dump(str(context), f) ###############################
+                    f.write("\n") ################"""
+                return chain.invoke({"input": t})
+            except Exception as e:
+                return {"error": str(e), "raw_output": getattr(e, "llm_output", None)}
+        
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            futures = [executor.submit(run_one, t) for t in texts]
+
+            for fut in as_completed(futures):
+                result = fut.result()
                 with open(output_file, "a") as f:
-                    json.dump(chain.invoke({"input": text}), f); f.write("\n")
+                    json.dump(result, f)
+                    f.write("\n")
 
-            mlflow.log_artifact(output_file)
-        except Exception as e:
-            mlflow.set_tag("error", e)
+        mlflow.log_artifact(output_file)
+        #except Exception as e:
+            #mlflow.set_tag("error", e)
     mlflow.end_run()
+    unload_model(params["model"])
 
 if __name__ == "__main__":
     main()
