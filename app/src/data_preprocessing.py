@@ -1,18 +1,37 @@
 import fsspec
 import pandas as pd
 import os
-
 from langchain.schema import Document
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import DocumentCompressorPipeline
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings, OllamaEmbeddings
 from langchain_community.document_transformers import EmbeddingsRedundantFilter, LongContextReorder
-
-
+import requests
 from langchain.retrievers.merger_retriever import MergerRetriever
 from dotenv import load_dotenv
 load_dotenv()
+
+def pull_model(model_name: str):
+    host = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+    response = requests.get(f"{host}/api/tags")
+    response.raise_for_status()
+
+    available = [m.get("name") for m in response.json().get("models", [])]
+
+    if model_name not in available:
+        print(f"Model '{model_name}' not found. Pulling...")
+        pull_response = requests.post(f"{host}/api/pull", json={"name": model_name})
+        pull_response.raise_for_status()
+
+        for line in pull_response.iter_lines():
+            if line:
+                print(line.decode("utf-8"))
+        print(f"{model_name} is downloaded.")
+    else:
+        print(f"{model_name} already downloaded.")
+
+
 
 class DataProcessor:
     def __init__(self) -> None:
@@ -25,7 +44,7 @@ class DataProcessor:
         )
         self.mlflow_logging_url = f"{os.getenv('ENDPOINT_URL')}/mlflow/"
         self.ollama_host = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
-        self.base_db_storage = "../data/02_output/faiss_ollama"
+        self.base_db_storage = "data/02_output/faiss_ollama"
 
     def fetch_data(self, file_name: str) -> pd.DataFrame:
         file_path = f"datafiles/{file_name}"
@@ -41,8 +60,23 @@ class DataProcessor:
                 return pd.read_parquet(f)
             else:
                 raise ValueError(f"Unsupported file: {file_path}")
-            
-    
+    """ 
+    def fetch_data(self, file_name: str) -> pd.DataFrame:
+        file_path = f"/root/research-pipeline/app/data/01_input/{file_name}"
+        with open(file_path, "rb") as f:
+            if str(file_path).endswith(".csv"):
+                print("It's a csv!")
+                return pd.read_csv(f)
+            elif str(file_path).endswith(".json"):
+                print("It's a json!")
+                return pd.read_json(f)
+            elif str(file_path).endswith(".parquet"):
+                print("It's a parquet!")
+                return pd.read_parquet(f)
+            else:
+                raise ValueError(f"Unsupported file: {file_path}")
+    """
+
     def upload_data(self, file_path: str) -> None:
         self.fs.put(file_path, "datafiles/")
         print("Data successfully loaded")
@@ -53,14 +87,28 @@ class DataProcessor:
 
 
     def db_encoding(self, data_file):
-        raw_texts = self.fetch_data(data_file)
-        documents = [
-            Document(page_content=text, metadata={"id": f"row_{i}"})
-            for i, text in enumerate(raw_texts)
-        ]
+        df = self.fetch_data(data_file)
+
+        if "text" not in df.columns:
+            raise ValueError("CSV must contain a 'text' column")
+
+        documents = []
+
+        for _, row in df.iterrows():
+            text = str(row["text"]).strip()
+            if not text:
+                continue
+            # Add metadata as needed (row ID, title, url, etc.)
+            metadata = {
+                "id": row.get("id", None),
+            }
+
+            documents.append(Document(page_content=text, metadata=metadata))
+
         return documents
 
     def create_retriever(self, data_file: str):
+        pull_model("mxbai-embed-large")
         ollama_embeddings = OllamaEmbeddings(base_url=self.ollama_host, model="mxbai-embed-large")
 
         if os.path.exists(self.base_db_storage) and os.path.isdir(self.base_db_storage):
@@ -76,7 +124,7 @@ class DataProcessor:
             search_kwargs={"k": 5}
         )
 
-        print("Retrievercreated successfully.")
+        print("Retriever created successfully.")
         return retriever
 
     def create_complex_retriever(self, data_file: str):
