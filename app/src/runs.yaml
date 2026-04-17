@@ -150,49 +150,61 @@ runs:
     model: "llama3.1:8b"
     datafile: "Fake.csv"
     template: "rag"
+    context: "rag_texts_1.csv"
   experiment_38:
     model: "llama3.1:8b"
     datafile: "True.csv"
     template: "rag"
+    context: "rag_texts_1.csv"
   experiment_39:
     model: "llama3.1:8b"
     datafile: "data_ukr_trust.csv"
     template: "rag"
+    context: "rag_texts_1.csv"
   experiment_40:
     model: "llama3.1:8b"
     datafile: "data_ukr_fake.csv"
     template: "rag"
+    context: "rag_texts_1.csv"
 
   experiment_41:
     model: "qwen3:8b"
     datafile: "Fake.csv"
     template: "rag"
+    context: "rag_texts_1.csv"
   experiment_42:
     model: "qwen3:8b"
     datafile: "True.csv"
     template: "rag"
+    context: "rag_texts_1.csv"
   experiment_43:
     model: "qwen3:8b"
     datafile: "data_ukr_trust.csv"
     template: "rag"
+    context: "rag_texts_1.csv"
   experiment_44:
     model: "qwen3:8b"
     datafile: "data_ukr_fake.csv"
     template: "rag"
+    context: "rag_texts_1.csv"
 
   experiment_45:
     model: "gemma3:12b"
     datafile: "Fake.csv"
     template: "rag"
+    context: "rag_texts_1.csv"
   experiment_46:
     model: "gemma3:12b"
     datafile: "True.csv"
     template: "rag"
+    context: "rag_texts_1.csv"
   experiment_47:
     model: "gemma3:12b"
     datafile: "data_ukr_trust.csv"
     template: "rag"
+    context: "rag_texts_1.csv"
   experiment_48:
     model: "gemma3:12b"
     datafile: "data_ukr_fake.csv"
     template: "rag"
+    context: "rag_texts_1.csv"
